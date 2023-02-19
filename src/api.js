@@ -1,4 +1,5 @@
 const ENDPOINT = 'https://pixabay.com/api/';
+const key = '33719885-4078ecd8a7ef8c07d3287ea16';
 
 // const options = {
 //   key: '33719885-4078ecd8a7ef8c07d3287ea16',
@@ -8,12 +9,16 @@ const ENDPOINT = 'https://pixabay.com/api/';
 //   safesearch: 'true',
 // };
 
-function fetchData(query) {
+function fetchData(q) {
   return fetch(
-    `${ENDPOINT}?key=33719885-4078ecd8a7ef8c07d3287ea16&image_type=photo&orientation=horizontal&safesearch=true&q=${query}`
-  )
-    .then(response => response.json())
-    // .then(({ hits }) => console.log(hits));
+    `${ENDPOINT}?key=${key}&q=${q}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=1`
+  ).then(response => {
+    if (!response.ok) {
+      throw new Error(respose.statusText);
+    }
+    return response.json();
+  });
+  // .then(({ hits }) => console.log(hits));
 }
 
 export default fetchData;

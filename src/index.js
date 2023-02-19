@@ -2,10 +2,27 @@ import fetchData from './api.js';
 import Notiflix from 'notiflix';
 
 const form = document.getElementById('search-form');
-// const searchBtn = document.querySelector('.cearch-btn');
 const gallery = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
 
 form.addEventListener('submit', onSubmit);
+loadMoreBtn.addEventListener('click', loadMore);
+
+let page = 1;
+function loadMore() {
+  page += 1;
+  fetchData(q).then(data =>
+    createMarkup({
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    })
+  );
+}
 
 function onSubmit(e) {
   e.preventDefault();
@@ -20,7 +37,8 @@ function onSubmit(e) {
           'Sorry, there are no images matching your search query. Please try again.'
         );
 
-      return hits.reduse((markup, hit) => createMarkup(hit) + markup, '');
+      return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
+      loadMoreBtn.hidden = false;
     })
     .then(updateNewsList)
     .catch(onError)
@@ -28,7 +46,7 @@ function onSubmit(e) {
 }
 
 function updateNewsList(markup) {
-  gallery.insertAdjacentHTML('beforeend', markup)
+  gallery.insertAdjacentHTML('beforeend', markup);
 }
 
 function createMarkup({
