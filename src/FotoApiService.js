@@ -7,7 +7,7 @@ export default class FotoApiService {
     this.searchQuery = '';
   }
 
-  getFotos(query) {
+  getFotos() {
     const URL = `${ENDPOINT}?key=${key}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
 
     return fetch(URL)

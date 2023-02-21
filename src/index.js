@@ -1,13 +1,19 @@
 import FotoApiService from './FotoApiService.js';
+import LoadMoreBtn from './components/LoadMoreBtn.js';
 import Notiflix from 'notiflix';
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
-const loadMoreBtn = document.querySelector('.load-more');
-const fotoApiService = new FotoApiService();
-console.log(fotoApiService);
 
-loadMoreBtn.addEventListener('click', fetchHits);
+const fotoApiService = new FotoApiService();
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '#loadMore',
+  isHidden: true,
+});
+console.log(fotoApiService);
+console.log(loadMoreBtn);
+
+loadMoreBtn.button.addEventListener('click', fetchHits);
 form.addEventListener('submit', onSubmit);
 
 function onSubmit(e) {
@@ -20,11 +26,13 @@ function onSubmit(e) {
   fotoApiService.resetPage();
 
   clearFotosList();
-
+  loadMoreBtn.show();
   fetchHits().finally(() => form.reset());
 }
 
 function fetchHits() {
+  loadMoreBtn.disable();
+
   return fotoApiService
     .getFotos()
     .then(hits => {
@@ -36,7 +44,10 @@ function fetchHits() {
       return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
       // loadMoreBtn.hidden = false;
     })
-    .then(appendFotosToList)
+    .then(markup => {
+      appendFotosToList(markup);
+      loadMoreBtn.enable();
+    })
     .catch(onError);
 }
 
@@ -78,6 +89,7 @@ function createMarkup({
 
 function onError(err) {
   console.error(err);
+  loadMoreBtn.hide();
 }
 
 // ----------------------------------------------------
