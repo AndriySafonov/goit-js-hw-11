@@ -1,12 +1,13 @@
-import fetchData from './api.js';
+import FotoApiService from './FotoApiService.js';
 import Notiflix from 'notiflix';
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
+const fotoApiService = new FotoApiService();
+console.log(fotoApiService);
 
-
-// loadMoreBtn.addEventListener('click', loadMore);
+loadMoreBtn.addEventListener('click', fetchHits);
 form.addEventListener('submit', onSubmit);
 
 function onSubmit(e) {
@@ -15,8 +16,18 @@ function onSubmit(e) {
   const form = e.currentTarget;
   const value = form.elements.searchQuery.value.trim();
 
-  fetchData(value)
-    .then(({ hits }) => {
+  fotoApiService.searchQuery = value;
+  fotoApiService.resetPage();
+
+  clearFotosList();
+
+  fetchHits().finally(() => form.reset());
+}
+
+function fetchHits() {
+  return fotoApiService
+    .getFotos()
+    .then(hits => {
       if (hits.length === 0)
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
@@ -25,13 +36,16 @@ function onSubmit(e) {
       return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
       // loadMoreBtn.hidden = false;
     })
-    .then(updateNewsList)
-    .catch(onError)
-    .finally(() => form.reset());
-} 
+    .then(appendFotosToList)
+    .catch(onError);
+}
 
-function updateNewsList(markup) {
+function appendFotosToList(markup) {
   gallery.insertAdjacentHTML('beforeend', markup);
+}
+
+function clearFotosList() {
+  gallery.innerHTML = '';
 }
 
 function createMarkup({
@@ -66,8 +80,6 @@ function onError(err) {
   console.error(err);
 }
 
-
-
 // ----------------------------------------------------
 
 // let page = 1;
@@ -88,8 +100,6 @@ function onError(err) {
 
 // function onSubmit(e) {
 //   e.preventDefault();
-
-
 
 //   fetchData(value)
 //     .then(({ hits }) => {
