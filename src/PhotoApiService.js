@@ -1,13 +1,15 @@
+import axios from 'axios';
+
 const ENDPOINT = 'https://pixabay.com/api/';
 const key = '33719885-4078ecd8a7ef8c07d3287ea16';
 
-export default class FotoApiService {
+export default class PhotoApiService {
   constructor() {
     this.page = 1;
     this.searchQuery = '';
   }
 
-  getFotos() {
+  getPhotos() {
     const URL = `${ENDPOINT}?key=${key}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
 
     return fetch(URL)
@@ -16,6 +18,7 @@ export default class FotoApiService {
         this.nextPage();
         return hits;
       });
+    // return axios.get(URL).then(({ hits }) => hits);
   }
 
   nextPage() {
