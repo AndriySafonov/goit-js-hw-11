@@ -1,7 +1,7 @@
 import PhotoApiService from './PhotoApiService.js';
 import LoadMoreBtn from './components/LoadMoreBtn.js';
 import Notiflix from 'notiflix';
-import SimpleLightbox from "simplelightbox";
+import SimpleLightbox from 'simplelightbox';
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
@@ -37,10 +37,11 @@ function fetchHits() {
   return photoApiService
     .getPhotos()
     .then(hits => {
-      if (hits.length === 0)
+      if (hits.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+      }
 
       return hits.reduce((markup, hit) => createMarkup(hit) + markup, '');
       // loadMoreBtn.hidden = false;
@@ -94,4 +95,3 @@ function onError(err) {
   console.error(err);
   loadMoreBtn.hide();
 }
-
