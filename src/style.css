@@ -32,7 +32,7 @@ img {
 .search-form {
   display: flex;
   border: 1px solid #7eb355;
-  padding:3px 12px 4px 24px;
+  padding: 3px 12px 4px 24px;
   width: 254px;
   height: 30px;
   background-color: #fff9f9;
@@ -57,7 +57,7 @@ button {
   line-height: 20px;
   color: #4f432e;
   background-color: #fbfaff;
-  cursor: pointer; 
+  cursor: pointer;
 }
 button.hidden {
   display: none;
@@ -67,4 +67,36 @@ button:disabled {
   cursor: not-allowed;
 }
 .gallery {
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-left: -10px;
+  padding-top: 60px;
+  display: flex;
+}
+.gallery__item {
+  min-width: 320px;
+  border: 2px solid #f1eeee;
+  border-radius: 5px;
+  flex-basis: calc(20% - 2px);
+  margin-top: 10px;
+  margin-left: 10px;
+  transition: all 0.3s;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 20%), 0 1px 1px rgb(0 0 0 / 14%),
+    0 2px 1px -1px rgb(0 0 0 / 12%);
+}
+.gallery-img {
+  height: 30vh;
+  object-fit: cover;
+  display: block;
+}
+.info {
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: column;
+  padding: 10px;
+  display: flex;
+}
+.info-item{
+  margin: 0;
 }

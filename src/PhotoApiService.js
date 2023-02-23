@@ -10,15 +10,15 @@ export default class PhotoApiService {
   }
 
   getPhotos() {
-    const URL = `${ENDPOINT}?key=${key}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
+    const URL = `${ENDPOINT}?key=${key}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
 
-    return fetch(URL)
-      // .then(response => response.json())
-      // .then(({ hits }) => {
-      //   this.nextPage();
-      //   return hits;
-      // });
-      return axios.get(URL).then(({ data }) => data.hits);
+    // return fetch(URL)
+    //   .then(response => response.json())
+    //   .then(({ hits }) => {
+    //     this.nextPage();
+    //     return hits;
+    //   });
+    return axios.get(URL).then(({ data }) => data.hits);
   }
 
   nextPage() {
@@ -29,4 +29,3 @@ export default class PhotoApiService {
     this.page = 1;
   }
 }
-

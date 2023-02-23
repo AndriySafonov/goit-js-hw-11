@@ -1,6 +1,7 @@
 import PhotoApiService from './PhotoApiService.js';
 import LoadMoreBtn from './components/LoadMoreBtn.js';
 import Notiflix from 'notiflix';
+import SimpleLightbox from "simplelightbox";
 
 const form = document.getElementById('search-form');
 const gallery = document.querySelector('.gallery');
@@ -68,8 +69,10 @@ function createMarkup({
   comments,
   downloads,
 }) {
-  return `<div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  return `
+  <a class="gallery__item" href="${largeImageURL}" onclick="return false;">
+  <div class="photo-card">
+  <img class="gallery-img" src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
       <b>Likes${likes}</b>
