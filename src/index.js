@@ -103,37 +103,4 @@ async function onButtonLoadMore() {
   lightbox.refresh();
 }
 
-// try {
-//   const btnResponse = await fetchSearchImage(page, searchQuery);
 
-//   let totalPages = btnResponse.totalHits / perPage;
-
-//   if (page >= totalPages) {
-//       Notify.failure("We're sorry, but you've reached the end of search results");
-//       btnLoad.style.display = "none";
-//   }
-
-//   createCardImg(btnResponse.hits);
-
-//   const { height: cardHeight } = galleryList.firstElementChild.getBoundingClientRect();
-
-//   window.scrollBy({
-//     top: cardHeight * 2,
-//     behavior: "smooth",
-//   });
-
-// без try..catch
-// .then(imgSearchFeatchMore => {
-//   createCardImg(imgSearchFeatchMore.hits);
-//   let totalPages = imgSearchFeatchMore.totalHits / perPage;
-//   if (page >= totalPages) {
-//       Notify.failure("We're sorry, but you've reached the end of search results");
-//       btnLoad.style.display = "none";
-//   }
-
-// })
-
-// функція скрол
-// function onScroll() {
-
-// }
