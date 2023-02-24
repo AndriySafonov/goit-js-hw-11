@@ -1,15 +1,17 @@
-import { fetchSearchImage } from "./fetchSearchImage";
+import { createCardImg } from './createCardImg';
+import { fetchSearchImage } from './fetchSearchImage';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 // SimpleLightbox
-import SimpleLightbox from "simplelightbox";
-import "simplelightbox/dist/simple-lightbox.min.css";
-
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const formSearch = document.querySelector('#search-form');
-const galleryList = document.querySelector('.gallery');
 const btnLoad = document.querySelector('.load-more');
 
-const lightbox = new SimpleLightbox('.gallery a', {captionsData: 'alt', captionDelay: 250});
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 let page = 1;
 let searchQuery = '';
@@ -18,154 +20,120 @@ let perPage = 40;
 formSearch.addEventListener('submit', onSearch);
 btnLoad.addEventListener('click', onButtonLoadMore);
 
-btnLoad.style.display = "none";
+btnLoad.style.display = 'none';
 
-// Пошук в search
+// Поиск с проверками на ошибки в onSearch
 
-async function onSearch(event){ 
-    event.preventDefault();
+async function onSearch(event) {
+  event.preventDefault();
 
-    searchQuery = event.currentTarget.searchQuery.value.trim();
-    page = 1;
+  searchQuery = event.currentTarget.searchQuery.value.trim();
+  page = 1;
 
-    if(!searchQuery) {
-        galleryList.innerHTML = '';
-        return;
+  if (!searchQuery) {
+    galleryList.innerHTML = '';
+    return;
+  }
+
+  try {
+    const serchResponse = await fetchSearchImage(page, searchQuery);
+
+    Notify.info(`Hooray! We found ${serchResponse.totalHits} images.`);
+
+    if (serchResponse.totalHits === 0) {
+      Notify.warning(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+      btnLoad.style.display = 'none';
+    } else {
+      btnLoad.style.display = 'block';
     }
 
-    try {
+    createCardImg(serchResponse.hits);
 
-      const serchResponse = await fetchSearchImage(page, searchQuery);
+    //  без try..catch
 
-      Notify.info(`Hooray! We found ${serchResponse.totalHits} images.`);
+    // .then(imgSearchFeatch => {
+    //   Notify.info(`Hooray! We found ${imgSearchFeatch.totalHits} images.`);
+    //     if(imgSearchFeatch.totalHits === 0){
+    //       Notify.warning('Sorry, there are no images matching your search query. Please try again.');
+    //       btnLoad.style.display = "none";
+    //     }else{
+    //       btnLoad.style.display = "block";
+    //     }
+    //     createCardImg(imgSearchFeatch.hits);
+    // })
+  } catch (error) {
+    console.log(error.message);
+  }
 
-      if(serchResponse.totalHits === 0){
-        Notify.warning('Sorry, there are no images matching your search query. Please try again.');
-        btnLoad.style.display = "none";
-      }else{
-        btnLoad.style.display = "block";
-      }
+  lightbox.refresh();
+}
 
-      createCardImg(serchResponse.hits)
+// по клику, загрузка следующей страницы с контентом
 
-      //  без try..catch
-
-      // .then(imgSearchFeatch => {
-      //   Notify.info(`Hooray! We found ${imgSearchFeatch.totalHits} images.`);
-      //     if(imgSearchFeatch.totalHits === 0){
-      //       Notify.warning('Sorry, there are no images matching your search query. Please try again.');
-      //       btnLoad.style.display = "none";
-      //     }else{
-      //       btnLoad.style.display = "block";
-      //     }
-      //     createCardImg(imgSearchFeatch.hits);
-      // })
-    } catch (error) {
-      console.log(error.message);
-    }
-
-    lightbox.refresh();
-   
-};
-
-// при кліку загрузка ще контенту
-
-async function onButtonLoadMore() {  
+async function onButtonLoadMore() {
   page += 1;
 
   try {
     await fetchSearchImage(page, searchQuery).then(imgSearchFeatchMore => {
-
-        let totalPages = imgSearchFeatchMore.totalHits / perPage;
-        if (page >= totalPages) {
-            Notify.failure("We're sorry, but you've reached the end of search results");
-            btnLoad.style.display = "none";
-        }
+      let totalPages = imgSearchFeatchMore.totalHits / perPage;
+      if (page >= totalPages) {
+        Notify.failure(
+          "We're sorry, but you've reached the end of search results"
+        );
+        btnLoad.style.display = 'none';
+      }
 
       createCardImg(imgSearchFeatchMore.hits);
 
-      const { height: cardHeight } = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
 
       window.scrollBy({
         top: cardHeight * 2,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 
-    })
-      } catch (error) {
-        console.log(error); 
-      }
-    
-      lightbox.refresh();
+  lightbox.refresh();
 }
-    
 
-  // try {
-  //   const btnResponse = await fetchSearchImage(page, searchQuery);
+// try {
+//   const btnResponse = await fetchSearchImage(page, searchQuery);
 
-  //   let totalPages = btnResponse.totalHits / perPage;
+//   let totalPages = btnResponse.totalHits / perPage;
 
-  //   if (page >= totalPages) {
-  //       Notify.failure("We're sorry, but you've reached the end of search results");
-  //       btnLoad.style.display = "none";
-  //   }
-    
-  //   createCardImg(btnResponse.hits);
+//   if (page >= totalPages) {
+//       Notify.failure("We're sorry, but you've reached the end of search results");
+//       btnLoad.style.display = "none";
+//   }
 
-  //   const { height: cardHeight } = galleryList.firstElementChild.getBoundingClientRect();
+//   createCardImg(btnResponse.hits);
 
-  //   window.scrollBy({
-  //     top: cardHeight * 2,
-  //     behavior: "smooth",
-  //   });
+//   const { height: cardHeight } = galleryList.firstElementChild.getBoundingClientRect();
 
-    // без try..catch
-    // .then(imgSearchFeatchMore => {
-    //   createCardImg(imgSearchFeatchMore.hits);
-    //   let totalPages = imgSearchFeatchMore.totalHits / perPage;
-    //   if (page >= totalPages) {
-    //       Notify.failure("We're sorry, but you've reached the end of search results");
-    //       btnLoad.style.display = "none";
-    //   }
-  
-    // })
-    
- 
+//   window.scrollBy({
+//     top: cardHeight * 2,
+//     behavior: "smooth",
+//   });
+
+// без try..catch
+// .then(imgSearchFeatchMore => {
+//   createCardImg(imgSearchFeatchMore.hits);
+//   let totalPages = imgSearchFeatchMore.totalHits / perPage;
+//   if (page >= totalPages) {
+//       Notify.failure("We're sorry, but you've reached the end of search results");
+//       btnLoad.style.display = "none";
+//   }
+
+// })
 
 // функція скрол
 // function onScroll() {
-  
+
 // }
-
-
-
-// функція яка робить вертку картинки 
-export function createCardImg(imgArr) {
-  galleryList.innerHTML = imgArr.map(img => 
-  `<div class="photo-card">
-      <div class="info">
-      <a href="${img.largeImageURL}" alt="${img.tags}" >
-        <img src="${img.webformatURL}" alt="${img.tags}" loading="lazy" class="photo-img" />
-      </a>
-      <div class="info-flex">
-        <p class="info-item">
-          <b>Likes: ${img.likes}</b>
-        </p>
-        <p class="info-item">
-          <b>Views: ${img.views}</b>
-        </p>
-        <p class="info-item">
-          <b>Comments: ${img.comments}</b>
-        </p>
-        <p class="info-item">
-          <b>Downloads: ${img.downloads}</b>
-        </p>
-      </div>
-      </div>
-  </div>`
-  ).join('')
-
-
-  
-};
-

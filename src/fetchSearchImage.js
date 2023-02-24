@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-// Запит на бекенд fetch
+// Запит на бекенд 
 export async function fetchSearchImage(page, searchQuery){
     const API_URL = 'https://pixabay.com/api/';
     const KEY = '?key=33719885-4078ecd8a7ef8c07d3287ea16';
